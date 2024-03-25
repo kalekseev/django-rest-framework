@@ -570,6 +570,15 @@ class TestUniqueConstraintValidation(TestCase):
             UniqueConstraintModel.objects.filter(race_name='example').values_list(flat=True)
         )
 
+    def test_unique_together_many(self):
+        serializer = UniqueConstraintSerializer(
+            data=[{"race_name": "A", "position": 1, "global_id": 4}],
+            many=True,
+            instance=UniqueConstraintModel.objects.all(),
+        )
+        assert len(serializer.child.validators) == 1
+        assert serializer.is_valid()
+
     def test_single_field_uniq_validators(self):
         """
         UniqueConstraint with single field must be transformed into
